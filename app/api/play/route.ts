@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (USE_MOCK) {
-    const aiResponse = "The sky is usually blue.";
+    const aiResponse = "Usually blue, but can change.";
     const score = similarityScore(aiResponse, guess);
     return NextResponse.json({ aiResponse, score });
   }
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 11,
+      max_tokens: 10,
     })
 
     const aiResponse = completion.choices[0]?.message?.content?.trim() || ''
