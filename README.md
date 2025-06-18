@@ -7,8 +7,8 @@
 ## 🚀 Features
 
 - Submit a prompt and make a guess
-- AI responds with a short reply (limited tokens)
-- Score is calculated based on word similarity
+- AI responds with a short reply (1-10 words)
+- Score is calculated based on similarity
 - Built with Next.js, TailwindCSS, and OpenAI API
 
 ---
@@ -24,25 +24,27 @@
 
 ## 🛠️ Setup Instructions
 
-1. Clone the repo  
+1. Clone the repo
    `git clone https://github.com/YOUR_USERNAME/guess-ai-response.git`
 
-2. Install dependencies  
+2. Install dependencies
    `npm install`
 
 3. Create a `.env.local` file with your OpenAI API key:
     OPENAI_API_KEY=your_api_key_here
 
 
-4. Run the development server  
+4. Run the development server
 `npm run dev`
 
 ---
 
 ## 🔮 Future Ideas
 
+- Hints
+- User accounts
 - Leaderboards / scoring history
 - Different AI difficulty levels
-- Custom prompt categories
+- Prompt categories / Curated daily prompts
 
 ---
