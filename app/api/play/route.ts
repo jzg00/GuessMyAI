@@ -1,6 +1,7 @@
 // app/api/play/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { calculateSimilarityScore } from '@/lib/scoring'
 
 // Toggle this to switch between mock and real responses
 const USE_MOCK = true;
@@ -9,50 +10,66 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-export async function POST(req: NextRequest) {
-  const { prompt, guess } = await req.json()
+const getWordCountPrompt = (wordCount: string) => {
+  switch (wordCount) {
+    case '1': return 'Answer in exactly 1 word'
+    case '5': return 'Answer in exactly 5 words no more no less'
+    case '10': return 'Answer in exactly 10 words no more no less'
+    default: return 'Answer in exactly 1 word'
+  }
+}
 
-  if (!prompt || !guess) {
-    return NextResponse.json({ error: 'Missing prompt or guess' }, { status: 400 })
+const getMaxTokens = (wordCount: string) => {
+  switch (wordCount) {
+    case '1': return 5
+    case '5': return 15
+    case '10': return 25
+    default: return 5
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const { prompt, guess, wordCount } = await req.json()
+
+  if (!prompt || !guess || !wordCount) {
+    return NextResponse.json({ error: 'Missing prompt, guess, or wordCount' }, { status: 400 })
   }
 
   if (USE_MOCK) {
-    const aiResponse = "Usually blue, but can change.";
-    const score = similarityScore(aiResponse, guess);
-    return NextResponse.json({ aiResponse, score });
+    const aiResponse = "Usually blue, but can change."
+    const score = calculateSimilarityScore(aiResponse, guess)
+    return NextResponse.json({ aiResponse, score })
   }
 
   try {
+    const systemPrompt = `Respond with exactly ${wordCount} words. No more, no less.`
+    const fullPrompt = `${prompt} (Response ID: ${Date.now()})`
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: fullPrompt }
+      ],
+      max_tokens: getMaxTokens(wordCount),
     })
 
-    const aiResponse = completion.choices[0]?.message?.content?.trim() || ''
-    const score = similarityScore(aiResponse, guess)
+    let aiResponse = completion.choices[0]?.message?.content?.trim() || ''
 
+    // Ensure complete sentence
+    if (aiResponse && !aiResponse.match(/[.!?]$/)) {
+      const words = aiResponse.split(' ')
+      if (words.length > 1) {
+        aiResponse = words.slice(0, -1).join(' ') + '.'
+      } else {
+        aiResponse += '.'
+      }
+    }
+
+    const score = calculateSimilarityScore(aiResponse, guess)
     return NextResponse.json({ aiResponse, score })
   } catch (error: any) {
-  console.error('OpenAI error:', error);
-  return NextResponse.json({ error: error.message || 'AI generation failed' }, { status: 500 });
-}
-
-}
-
-function similarityScore(a: string, b: string): number {
-    const clean = (str: string) =>
-    str.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
-
-    const cleanedA = clean(a);
-    const cleanedB = clean(b);
-
-    const setA = new Set(cleanedA.split(/\s+/));
-    const setB = new Set(cleanedB.split(/\s+/));
-
-    const intersection = new Set([...setA].filter(word => setB.has(word)));
-    const union = new Set([...setA, ...setB]);
-
-    const score = (intersection.size / Math.max(union.size, 1)) * 100;
-    return Math.round(score);
+    console.error('OpenAI error:', error)
+    return NextResponse.json({ error: error.message || 'AI generation failed' }, { status: 500 })
+  }
 }

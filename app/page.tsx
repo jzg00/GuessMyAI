@@ -1,82 +1,64 @@
 'use client'
 
-import { useState } from 'react'
+import { GameForm } from '@/components/game/GameForm'
+import { ScoreDisplay } from '@/components/game/ScoreDisplay'
+import { Button } from '@/components/ui/Button'
+import { useGame } from '@/hooks/useGame'
+import type { WordCountOption } from '@/lib/types'
 
 export default function Home() {
-  const [prompt, setPrompt] = useState('')
-  const [guess, setGuess] = useState('')
-  const [aiResponse, setAiResponse] = useState('')
-  const [score, setScore] = useState<number | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const { gameState, updateField, updateWordCount, submitGuess, resetGame } = useGame()
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    setAiResponse('')
-    setScore(null)
-
-    try {
-      const res = await fetch('/api/play', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, guess }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Something went wrong')
-      } else {
-        setAiResponse(data.aiResponse)
-        setScore(data.score)
-      }
-    } catch (err) {
-      setError('Failed to fetch API')
-    } finally {
-      setLoading(false)
-    }
+  const handleSubmit = (submission: { prompt: string; guess: string; wordCount: WordCountOption }) => {
+    submitGuess(submission)
   }
 
   return (
     <main style={{ maxWidth: 600, margin: 'auto', padding: 20 }}>
-      <h1>Guess the AI's Response</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Prompt:
-          <input
-            type="text"
-            value={prompt}
-            onChange={e => setPrompt(e.target.value)}
-            required
-            style={{ width: '100%', marginBottom: 10 }}
-          />
-        </label>
-        <label>
-          Your Guess:
-          <input
-            type="text"
-            value={guess}
-            onChange={e => setGuess(e.target.value)}
-            required
-            style={{ width: '100%', marginBottom: 10 }}
-          />
-        </label>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Guessing...' : 'Submit Guess'}
-        </button>
-      </form>
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Guess the AI's Response
+        </h1>
+        <p className="text-gray-600">
+          Submit a prompt and try to predict how the AI will respond!
+        </p>
+      </div>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <GameForm
+          prompt={gameState.prompt}
+          guess={gameState.guess}
+          wordCount={gameState.wordCount}
+          onPromptChange={(value) => updateField('prompt', value)}
+          onGuessChange={(value) => updateField('guess', value)}
+          onWordCountChange={updateWordCount}
+          onSubmit={handleSubmit}
+          loading={gameState.loading}
+        />
 
-      {aiResponse && (
-        <div style={{ marginTop: 20 }}>
-          <h2>AI Response:</h2>
-          <p>{aiResponse}</p>
-          <h3>Your Score: {score}%</h3>
-        </div>
-      )}
+        {gameState.error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-700">{gameState.error}</p>
+          </div>
+        )}
+
+        {gameState.aiResponse && gameState.score !== null && (
+          <>
+            <ScoreDisplay
+              aiResponse={gameState.aiResponse}
+              score={gameState.score}
+            />
+            <div className="mt-4 text-center">
+              <Button
+                onClick={resetGame}
+                variant="secondary"
+              >
+                Play Again
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
     </main>
   )
 }
