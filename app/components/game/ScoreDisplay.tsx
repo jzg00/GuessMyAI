@@ -19,8 +19,8 @@ export function ScoreDisplay({ aiResponse, score }: ScoreDisplayProps) {
     if (score >= 90) return '🎯 Excellent! Almost perfect!'
     if (score >= 80) return '🎉 Great job! Very close!'
     if (score >= 60) return '👍 Good guess!'
-    if (score >= 40) return '🤔 Not bad, but room for improvement'
-    return '💭 Keep trying!'
+    if (score >= 40) return '🤔 Not bad!'
+    return '💭 Try again!'
   }
 
   return (

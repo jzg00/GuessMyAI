@@ -42,7 +42,6 @@ export function GameForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
-        label="Prompt:"
         value={prompt}
         onChange={onPromptChange}
         required
@@ -59,7 +58,6 @@ export function GameForm({
       />
 
       <Input
-        label="Your Guess:"
         value={guess}
         onChange={onGuessChange}
         required

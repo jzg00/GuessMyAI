@@ -4,7 +4,7 @@ import OpenAI from 'openai'
 import { calculateSimilarityScore } from '@/lib/scoring'
 
 // Toggle this to switch between mock and real responses
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const systemPrompt = `Respond with exactly ${wordCount} words. No more, no less.`
-    const fullPrompt = `${prompt} (Response ID: ${Date.now()})`
+    const fullPrompt = `${prompt} (Session ID: ${Math.random().toString(36).slice(2)})`
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -52,6 +52,8 @@ export async function POST(req: NextRequest) {
         { role: 'user', content: fullPrompt }
       ],
       max_tokens: getMaxTokens(wordCount),
+      temperature: 2.0,
+      top_p: 1.0,
     })
 
     let aiResponse = completion.choices[0]?.message?.content?.trim() || ''

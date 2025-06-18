@@ -24,7 +24,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-gray-100 rounded-lg shadow-md p-6">
         <GameForm
           prompt={gameState.prompt}
           guess={gameState.guess}
