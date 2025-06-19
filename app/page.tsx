@@ -19,21 +19,23 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <main style={{ maxWidth: 600, margin: 'auto', padding: 20 }} className="flex-1">
-        <div className="text-center mb-8">
-          <div className="mb-6">
-            <img src="/logo.png" alt="Logo" className="w-16 h-16 mx-auto" />
+      <main style={{ maxWidth: 600, margin: 'auto', padding: '12px 20px' }} className="flex-1">
+        <div className="text-center mb-4">
+          <div className="mb-4">
+            <img src="/logo.png" alt="Logo" className="w-12 h-12 mx-auto" />
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Guess the AI's Response
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">
+            Guess the AI
           </h1>
-          <p className="text-gray-600">
-            Submit a prompt and try to predict how the AI will respond!
+          <p className="text-gray-600 text-sm">
+            {mode === 'daily'
+              ? "Try to guess today's AI response!"
+              : 'Submit a prompt and try to predict how the AI will respond!'}
           </p>
         </div>
 
-        <div className="flex mb-6">
+        <div className="flex mb-3">
           <button
             className={`flex-1 py-2 rounded-t-lg font-semibold transition ${
               mode === 'daily'
@@ -56,7 +58,7 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-5 w-[560px]">
           {mode === 'daily' ? (
             <DailyPromptGame />
           ) : (

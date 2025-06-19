@@ -83,7 +83,7 @@ export function GameForm({
         value={guess}
         onChange={onGuessChange}
         required
-        placeholder="What do you think the AI will say?"
+        placeholder="What will the AI say?"
         disabled={loading}
         maxLength={GUESS_MAX_LENGTH}
         showCharacterCount={true}

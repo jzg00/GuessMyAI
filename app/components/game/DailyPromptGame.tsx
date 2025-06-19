@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/Button'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { calculateSimilarityScore } from '@/lib/scoring'
+import { PromptDatePicker } from './PromptDatePicker'
 
 interface DailyPrompt {
   date: string
@@ -13,11 +13,10 @@ interface DailyPrompt {
 
 const MAX_ATTEMPTS = 3
 
-function getTodayLocalDateString() {
-  const today = new Date();
-  return today.getFullYear() + '-' +
-    String(today.getMonth() + 1).padStart(2, '0') + '-' +
-    String(today.getDate()).padStart(2, '0');
+function formatDateForDB(date: Date) {
+  return date.getFullYear() + '-' +
+    String(date.getMonth() + 1).padStart(2, '0') + '-' +
+    String(date.getDate()).padStart(2, '0');
 }
 
 function countWords(text: string) {
@@ -29,6 +28,7 @@ function countWords(text: string) {
 export function DailyPromptGame() {
   const [loading, setLoading] = useState(true)
   const [promptData, setPromptData] = useState<DailyPrompt | null>(null)
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [guess, setGuess] = useState('')
   const [attempts, setAttempts] = useState<string[]>([])
   const [attemptScores, setAttemptScores] = useState<number[]>([])
@@ -38,44 +38,53 @@ export function DailyPromptGame() {
 
   const maxWords = promptData ? countWords(promptData.ai_response) : 0;
 
-  // fetch daily prompt from database
+  // fetch prompt for selected date from API
   useEffect(() => {
     const fetchPrompt = async () => {
       setLoading(true)
-      const today = getTodayLocalDateString()
-      const { data, error } = await supabase
-        .from('daily_prompts')
-        .select('*')
-        .eq('date', today)
-        .single()
-      if (error || !data) {
+      const dateStr = formatDateForDB(selectedDate)
+
+      try {
+        const response = await fetch(`/api/daily-prompt?date=${dateStr}`)
+
+        if (response.status === 403) {
+          // Future date access denied
+          setPromptData(null)
+          setMessage('Cannot access prompts for future dates.')
+        } else if (response.status === 404) {
+          // No prompt found for this date
+          setPromptData(null)
+          setMessage('No prompt found for the selected date.')
+        } else if (response.ok) {
+          const data = await response.json()
+          setPromptData(data)
+          setMessage('')
+          // Reset game state for new date
+          setGuess('')
+          setAttempts([])
+          setAttemptScores([])
+          setRevealed(false)
+          setBestScore(0)
+        } else {
+          setPromptData(null)
+          setMessage('Error loading prompt.')
+        }
+      } catch (error) {
+        console.error('Error fetching prompt:', error)
         setPromptData(null)
-        setMessage('No daily prompt found for today.')
-      } else {
-        setPromptData(data)
-        setMessage('')
+        setMessage('Error loading prompt.')
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
     fetchPrompt()
-  }, [])
+  }, [selectedDate])
 
-  // REMOVE localStorage logic for development
-  // useEffect(() => {
-  //   const today = getTodayLocalDateString()
-  //   const stored = localStorage.getItem(`daily_attempts_${today}`)
-  //   if (stored) {
-  //     const arr = JSON.parse(stored)
-  //     setAttempts(arr)
-  //     if (arr.length >= MAX_ATTEMPTS) setRevealed(true)
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   const today = getTodayLocalDateString()
-  //   localStorage.setItem(`daily_attempts_${today}`, JSON.stringify(attempts))
-  //   if (attempts.length >= MAX_ATTEMPTS) setRevealed(true)
-  // }, [attempts])
+  const handleDateSelect = (date: Date | null) => {
+    if (date) {
+      setSelectedDate(date)
+    }
+  }
 
   const handleGuessInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -116,7 +125,22 @@ export function DailyPromptGame() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4 text-center">Today's Prompt</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold text-center">
+          {selectedDate.toLocaleDateString() === new Date().toLocaleDateString()
+            ? "Today's Prompt"
+            : `Prompt for ${selectedDate.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+              })}`
+          }
+        </h2>
+        <PromptDatePicker
+          selectedDate={selectedDate}
+          onDateSelect={handleDateSelect}
+        />
+      </div>
       <div className="mb-6 text-center text-lg text-gray-800 font-medium h-20 flex items-center justify-center relative">
         <span className="text-4xl text-gray-500 absolute left-0 top-1/2 -translate-y-1/2 font-serif">"</span>
         <span className="px-8 font-serif italic">{promptData.prompt}</span>
@@ -137,7 +161,7 @@ export function DailyPromptGame() {
                 type="text"
                 value={guess}
                 onChange={handleGuessInput}
-                placeholder="What do you think the AI will say?"
+                placeholder="What will the AI say?"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 pr-20"
                 disabled={revealed || attempts.length >= MAX_ATTEMPTS}
               />
@@ -170,7 +194,7 @@ export function DailyPromptGame() {
             <ul className="text-sm text-gray-600">
               {attempts.map((attempt, i) => (
                 <li key={i} className="mb-1">
-                  Guess {i + 1}: "{attempt}" - {attemptScores[i]}%
+                  "{attempt}" - {attemptScores[i]}%
                 </li>
               ))}
             </ul>
@@ -178,7 +202,11 @@ export function DailyPromptGame() {
               Best Score: {bestScore}%
             </div>
           </div>
-          <div className="text-gray-400 text-center mt-4">Try again tomorrow!</div>
+          <div className="text-gray-400 text-center mt-4">
+            {selectedDate.toLocaleDateString() === new Date().toLocaleDateString()
+              ? "Try again tomorrow!"
+              : "Try another date or today's prompt!"}
+          </div>
         </div>
       )}
     </div>
