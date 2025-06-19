@@ -9,6 +9,7 @@ interface InputProps {
   disabled?: boolean
   maxLength?: number
   showCharacterCount?: boolean
+  readOnly?: boolean
 }
 
 export function Input({
@@ -19,7 +20,8 @@ export function Input({
   placeholder = '',
   disabled = false,
   maxLength,
-  showCharacterCount = false
+  showCharacterCount = false,
+  readOnly = false
 }: InputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
@@ -45,6 +47,7 @@ export function Input({
           placeholder={placeholder}
           disabled={disabled}
           maxLength={maxLength}
+          readOnly={readOnly}
           className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${
             showCharacterCount && maxLength ? 'pr-16' : ''
           }`}

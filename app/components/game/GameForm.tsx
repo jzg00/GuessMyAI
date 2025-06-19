@@ -13,6 +13,11 @@ interface GameFormProps {
   onWordCountChange: (wordCount: WordCountOption) => void
   onSubmit: (submission: GameSubmission) => void
   loading: boolean
+  promptReadOnly?: boolean
+  hidePromptInput?: boolean
+  disableWordCount?: boolean
+  maxAttempts?: number
+  attempts?: number
 }
 
 export function GameForm({
@@ -23,7 +28,12 @@ export function GameForm({
   onGuessChange,
   onWordCountChange,
   onSubmit,
-  loading
+  loading,
+  promptReadOnly = false,
+  hidePromptInput = false,
+  disableWordCount = false,
+  maxAttempts,
+  attempts
 }: GameFormProps) {
   const PROMPT_MAX_LENGTH = 100
   const GUESS_MAX_LENGTH = 100
@@ -41,23 +51,35 @@ export function GameForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        value={prompt}
-        onChange={onPromptChange}
-        required
-        placeholder="Enter a prompt for the AI..."
-        disabled={loading}
-        maxLength={PROMPT_MAX_LENGTH}
-        showCharacterCount={true}
-      />
+      {!hidePromptInput ? (
+        <Input
+          // label="Prompt:"
+          value={prompt}
+          onChange={onPromptChange}
+          required
+          placeholder="Enter a prompt for the AI..."
+          disabled={loading || promptReadOnly}
+          maxLength={PROMPT_MAX_LENGTH}
+          showCharacterCount={true}
+          readOnly={promptReadOnly}
+        />
+      ) : (
+        <div className="mb-4">
+          <div className="text-gray-700 font-medium mb-1">Prompt:</div>
+          <div className="bg-gray-100 rounded px-3 py-2">{prompt}</div>
+        </div>
+      )}
 
-      <ResponseLength
-        selected={wordCount}
-        onChange={onWordCountChange}
-        disabled={loading}
-      />
+      {!disableWordCount && (
+        <ResponseLength
+          selected={wordCount}
+          onChange={onWordCountChange}
+          disabled={loading}
+        />
+      )}
 
       <Input
+        // label="Your Guess:"
         value={guess}
         onChange={onGuessChange}
         required
@@ -66,6 +88,12 @@ export function GameForm({
         maxLength={GUESS_MAX_LENGTH}
         showCharacterCount={true}
       />
+
+      {typeof maxAttempts === 'number' && typeof attempts === 'number' && (
+        <div className="text-sm text-gray-500 text-center">
+          Attempts: {attempts} / {maxAttempts}
+        </div>
+      )}
 
       <Button
         type="submit"

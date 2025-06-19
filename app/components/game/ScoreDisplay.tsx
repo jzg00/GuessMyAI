@@ -1,5 +1,4 @@
 import React from 'react'
-import type { GameResponse } from '@/lib/types'
 
 interface ScoreDisplayProps {
   aiResponse: string

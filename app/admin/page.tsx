@@ -40,6 +40,23 @@ export default function AdminPage() {
     }
   }
 
+  const fetchPromptForDate = async (selectedDate: string) => {
+    const { data, error } = await supabase
+      .from('daily_prompts')
+      .select('*')
+      .eq('date', selectedDate)
+      .single()
+    if (error || !data) {
+      setPrompt('')
+      setAiResponse('')
+      setMessage(error ? 'No prompt found for this date' : '')
+    } else {
+      setPrompt(data.prompt)
+      setAiResponse(data.ai_response)
+      setMessage('Prompt loaded')
+    }
+  }
+
   if (!authenticated) {
     return (
       <div className="bg-gray-900 min-h-screen flex items-center justify-center">
@@ -47,7 +64,7 @@ export default function AdminPage() {
           <h2 className="text-xl font-bold text-white">Admin Login</h2>
           <input
             type="password"
-            placeholder="Admin password"
+            placeholder="Enter password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             className="w-full border border-gray-700 bg-gray-900 text-white placeholder-gray-400 px-3 py-2 rounded"
@@ -67,7 +84,10 @@ export default function AdminPage() {
           <input
             type="date"
             value={date}
-            onChange={e => setDate(e.target.value)}
+            onChange={e => {
+              setDate(e.target.value)
+              fetchPromptForDate(e.target.value)
+            }}
             className="w-full border border-gray-700 bg-gray-900 text-white px-3 py-2 rounded"
           />
           <textarea
