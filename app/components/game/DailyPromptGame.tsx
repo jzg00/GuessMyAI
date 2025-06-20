@@ -84,19 +84,31 @@ export function DailyPromptGame() {
   const handleGuessInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    // Enforce character limit
+    // enforce character limit
     if (value.length > GUESS_MAX_LENGTH) {
       return;
     }
 
-    // Use the same word counting logic as the rest of the app
-    const wordCount = countWords(value);
-    if (wordCount <= maxWords) {
-      setGuess(value);
-    } else {
-      // If word count exceeds limit, don't allow the input
+    const currentWordCount = countWords(value);
+    const previousWordCount = countWords(guess);
+
+    if (previousWordCount >= maxWords) {
+      // allow finishing current word with alphanumeric only
+      const isAddingCharacter = value.length > guess.length;
+      if (isAddingCharacter) {
+        const newChar = value[value.length - 1];
+        if (/[^a-zA-Z0-9]/.test(newChar)) {
+          return;
+        }
+      }
+    }
+
+    // prevent exceeding word limit
+    if (currentWordCount > maxWords) {
       return;
     }
+
+    setGuess(value);
   };
 
   const handleGuess = (e: React.FormEvent) => {

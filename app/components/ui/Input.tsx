@@ -31,22 +31,34 @@ export function Input({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
 
-    // handle character limit
+    // enforce character limit
     if (maxLength && newValue.length > maxLength) {
       return
     }
 
     // handle word limit
     if (showWordCount && wordLimit) {
-      // use the same sophisticated word counting logic
-      const wordCount = countWords(newValue)
-      if (wordCount <= wordLimit) {
-        onChange(newValue)
-      } else {
-        // If word count exceeds limit, don't allow the input
-        return
+      const currentWordCount = countWords(newValue);
+      const previousWordCount = countWords(value);
+
+      if (previousWordCount >= wordLimit) {
+        // allow finishing current word with alphanumeric only
+        const isAddingCharacter = newValue.length > value.length;
+        if (isAddingCharacter) {
+          const newChar = newValue[newValue.length - 1];
+          if (/[^a-zA-Z0-9]/.test(newChar)) {
+            return;
+          }
+        }
       }
-      return
+
+      // prevent exceeding word limit
+      if (currentWordCount > wordLimit) {
+        return;
+      }
+
+      onChange(newValue);
+      return;
     }
 
     onChange(newValue)

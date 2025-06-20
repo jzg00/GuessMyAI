@@ -29,9 +29,7 @@ export default function Home() {
             Guess the AI
           </h1>
           <p className="text-gray-600 text-sm">
-            {mode === 'daily'
-              ? "Try to guess today's AI response!"
-              : 'Submit a prompt and try to predict how the AI will respond!'}
+            Predict what the AI will say!
           </p>
         </div>
 
@@ -65,7 +63,7 @@ export default function Home() {
             <>
               <div className="text-center mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  Custom Prompt Mode
+                  Custom Mode
                 </h2>
                 <p className="text-gray-600 text-sm">
                   Submit your own prompt and get an AI response in real-time.
