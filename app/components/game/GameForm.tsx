@@ -2,6 +2,7 @@ import React from 'react'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { ResponseLength } from '@/components/game/ResponseLength'
+import { countWords } from '@/lib/scoring'
 import type { GameSubmission, WordCountOption } from '@/lib/types'
 
 interface GameFormProps {
@@ -36,10 +37,13 @@ export function GameForm({
   attempts
 }: GameFormProps) {
   const PROMPT_MAX_LENGTH = 100
-  const GUESS_MAX_LENGTH = 100
+  const GUESS_MAX_LENGTH = 100 // Add character limit for guess input
+
+  // convert wordCount to number for validation
+  const wordLimit = parseInt(wordCount)
 
   const isPromptValid = prompt.length <= PROMPT_MAX_LENGTH
-  const isGuessValid = guess.length <= GUESS_MAX_LENGTH
+  const isGuessValid = countWords(guess) <= wordLimit && guess.length <= GUESS_MAX_LENGTH
   const canSubmit = isPromptValid && isGuessValid && prompt.trim() && guess.trim()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -85,8 +89,9 @@ export function GameForm({
         required
         placeholder="What will the AI say?"
         disabled={loading}
+        showWordCount={true}
+        wordLimit={wordLimit}
         maxLength={GUESS_MAX_LENGTH}
-        showCharacterCount={true}
       />
 
       {typeof maxAttempts === 'number' && typeof attempts === 'number' && (

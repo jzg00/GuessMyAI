@@ -13,7 +13,7 @@ export function PromptDatePicker({ onDateSelect, selectedDate }: PromptDatePicke
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  // Fetch available dates when component mounts
+  // fetch available dates when component mounts
   useEffect(() => {
     const fetchAvailableDates = async () => {
       try {

@@ -11,7 +11,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from('daily_prompts')
       .select('date')
-      .lte('date', todayString) // Less than or equal to today
+      .lte('date', todayString) // less than or equal to today
       .order('date', { ascending: false })
 
     if (error) {

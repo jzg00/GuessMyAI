@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { calculateSimilarityScore } from '@/lib/scoring'
 
-// Toggle this to switch between mock and real responses
+// toggle this to switch between mock and real responses
 const USE_MOCK = false;
 
 const openai = new OpenAI({
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     let aiResponse = completion.choices[0]?.message?.content?.trim() || ''
 
-    // Ensure complete sentence
+    // ensure complete sentence
     if (aiResponse && !aiResponse.match(/[.!?]$/)) {
       const words = aiResponse.split(' ')
       if (words.length > 1) {

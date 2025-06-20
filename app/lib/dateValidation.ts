@@ -1,5 +1,5 @@
 /**
- * Server-side date validation utilities
+ * server-side date validation utilities
  */
 
 export function getServerDate(): Date {

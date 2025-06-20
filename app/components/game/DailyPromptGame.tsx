@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
-import { calculateSimilarityScore } from '@/lib/scoring'
+import { calculateSimilarityScore, countWords } from '@/lib/scoring'
 import { PromptDatePicker } from './PromptDatePicker'
 
 interface DailyPrompt {
@@ -12,17 +12,12 @@ interface DailyPrompt {
 }
 
 const MAX_ATTEMPTS = 3
+const GUESS_MAX_LENGTH = 100 // Add character limit for guess input
 
 function formatDateForDB(date: Date) {
   return date.getFullYear() + '-' +
     String(date.getMonth() + 1).padStart(2, '0') + '-' +
     String(date.getDate()).padStart(2, '0');
-}
-
-function countWords(text: string) {
-  // Remove punctuation and special characters, then split by whitespace
-  const cleanText = text.replace(/[^\w\s]/g, ' ').trim();
-  return cleanText.split(/\s+/).filter(word => word.length > 0).length;
 }
 
 export function DailyPromptGame() {
@@ -48,18 +43,18 @@ export function DailyPromptGame() {
         const response = await fetch(`/api/daily-prompt?date=${dateStr}`)
 
         if (response.status === 403) {
-          // Future date access denied
+          // future date access denied
           setPromptData(null)
           setMessage('Cannot access prompts for future dates.')
         } else if (response.status === 404) {
-          // No prompt found for this date
+          // no prompt found for this date
           setPromptData(null)
           setMessage('No prompt found for the selected date.')
         } else if (response.ok) {
           const data = await response.json()
           setPromptData(data)
           setMessage('')
-          // Reset game state for new date
+          // reset game state for new date
           setGuess('')
           setAttempts([])
           setAttemptScores([])
@@ -88,11 +83,19 @@ export function DailyPromptGame() {
 
   const handleGuessInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const words = value.trim().split(/\s+/).filter(Boolean);
-    if (words.length <= maxWords) {
+
+    // Enforce character limit
+    if (value.length > GUESS_MAX_LENGTH) {
+      return;
+    }
+
+    // Use the same word counting logic as the rest of the app
+    const wordCount = countWords(value);
+    if (wordCount <= maxWords) {
       setGuess(value);
     } else {
-      setGuess(words.slice(0, maxWords).join(' '));
+      // If word count exceeds limit, don't allow the input
+      return;
     }
   };
 
@@ -164,6 +167,7 @@ export function DailyPromptGame() {
                 placeholder="What will the AI say?"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 pr-20"
                 disabled={revealed || attempts.length >= MAX_ATTEMPTS}
+                maxLength={GUESS_MAX_LENGTH}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 opacity-70">
                 {countWords(guess)}/{maxWords} words
@@ -171,7 +175,7 @@ export function DailyPromptGame() {
             </div>
             <Button
               type="submit"
-              disabled={revealed || attempts.length >= MAX_ATTEMPTS || !guess.trim()}
+              disabled={revealed || attempts.length >= MAX_ATTEMPTS || !guess.trim() || guess.length > GUESS_MAX_LENGTH || countWords(guess) > maxWords}
               className="w-full"
             >
               Submit Guess

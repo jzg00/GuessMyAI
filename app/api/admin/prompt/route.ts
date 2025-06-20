@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
-  // For admin operations, we might want to allow future dates
-  // But we can still validate the date format
+  // for admin operations, we might want to allow future dates
+  // but we can still validate the date format
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/
   if (!dateRegex.test(date)) {
     return NextResponse.json({ error: 'Invalid date format. Use YYYY-MM-DD' }, { status: 400 })
@@ -41,8 +41,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Date parameter is required' }, { status: 400 })
   }
 
-  // For admin, we can allow access to future dates
-  // But we still validate the date format
+  // for admin, we can allow access to future dates
+  // but we still validate the date format
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/
   if (!dateRegex.test(date)) {
     return NextResponse.json({ error: 'Invalid date format' }, { status: 400 })
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        // No rows returned
+        // no rows returned
         return NextResponse.json({ error: 'No prompt found for the selected date' }, { status: 404 })
       }
       return NextResponse.json({ error: 'Database error' }, { status: 500 })

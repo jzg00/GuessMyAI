@@ -63,6 +63,15 @@ export default function Home() {
             <DailyPromptGame />
           ) : (
             <>
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  Custom Prompt Mode
+                </h2>
+                <p className="text-gray-600 text-sm">
+                  Submit your own prompt and get an AI response in real-time.
+                </p>
+              </div>
+
               <GameForm
                 prompt={gameState.prompt}
                 guess={gameState.guess}

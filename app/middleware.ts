@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // this middleware can be used to add authentication to admin routes in the future
+  // this middleware can be used to add authentication to admin routes
   // for now, it just passes through all requests
   return NextResponse.next()
 }
