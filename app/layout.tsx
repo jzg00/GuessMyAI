@@ -3,7 +3,7 @@ import '@/globals.css'
 import { ReactNode } from 'react'
 
 export const metadata = {
-  title: 'Guess The AI',
+  title: 'GuessMyAI',
   description: 'Try to guess what the AI will say!',
 }
 

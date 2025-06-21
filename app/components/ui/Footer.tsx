@@ -5,7 +5,7 @@ interface FooterProps {
   className?: string
 }
 
-export function Footer({ text = "© 2025 GuessTheAI All rights reserved.", className = "" }: FooterProps) {
+export function Footer({ text = "© 2025 GuessMyAI All rights reserved.", className = "" }: FooterProps) {
   return (
     <footer className={`text-center py-6 text-gray-500 text-sm ${className}`}>
       {text}
