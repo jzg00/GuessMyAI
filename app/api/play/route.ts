@@ -29,21 +29,20 @@ const getMaxTokens = (wordCount: string) => {
 }
 
 export async function POST(req: NextRequest) {
-  const { prompt, guess, wordCount } = await req.json()
-
-  if (!prompt || !guess || !wordCount) {
-    return NextResponse.json({ error: 'Missing prompt, guess, or wordCount' }, { status: 400 })
-  }
-
-  if (USE_MOCK) {
-    const aiResponse = "Usually blue, but can change."
-    const score = calculateSimilarityScore(aiResponse, guess)
-    return NextResponse.json({ aiResponse, score })
-  }
-
   try {
+    const { prompt, guess, wordCount } = await req.json()
+
+    if (!prompt || !guess || !wordCount) {
+      return NextResponse.json({ error: 'Missing prompt, guess, or wordCount' }, { status: 400 })
+    }
+
+    if (USE_MOCK) {
+      const aiResponse = "Usually blue, but can change."
+      const score = calculateSimilarityScore(aiResponse, guess)
+      return NextResponse.json({ aiResponse, score })
+    }
+
     const systemPrompt = ` Be coherent and respond with exactly ${wordCount} words. No more, no less.`
-    // const fullPrompt = `${prompt}`
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
