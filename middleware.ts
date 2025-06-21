@@ -65,10 +65,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // protect admin namespace (bearer token + higher limit)
-  if (request.nextUrl.pathname.startsWith('/api/admin')) {
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader || authHeader !== `Bearer ${process.env.ADMIN_SECRET_KEY}`) {
+  // protect admin namespace (cookie-based auth + higher limit)
+  if (request.nextUrl.pathname.startsWith('/api/admin') && request.nextUrl.pathname !== '/api/admin/login') {
+    const adminCookie = request.cookies.get('admin_auth')
+    if (!adminCookie || adminCookie.value !== 'true') {
       return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
     }
 

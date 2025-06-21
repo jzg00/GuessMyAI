@@ -25,7 +25,7 @@ export function ScoreDisplay({ aiResponse, score }: ScoreDisplayProps) {
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <h2 className="text-xl font-semibold mb-2">AI Response:</h2>
-      <p className="text-gray-800 mb-4 italic">"{aiResponse}"</p>
+      <p className="text-gray-800 mb-4 italic">&quot;{aiResponse}&quot;</p>
 
       <div className="border-t pt-4">
         <h3 className={`text-lg font-bold ${getScoreColor(score)}`}>

@@ -10,15 +10,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-const getWordCountPrompt = (wordCount: string) => {
-  switch (wordCount) {
-    case '1': return 'Answer in exactly 1 word'
-    case '5': return 'Answer in exactly 5 words no more no less'
-    case '10': return 'Answer in exactly 10 words no more no less'
-    default: return 'Answer in exactly 1 word'
-  }
-}
-
 const getMaxTokens = (wordCount: string) => {
   switch (wordCount) {
     case '1': return 10
@@ -69,8 +60,13 @@ export async function POST(req: NextRequest) {
 
     const score = calculateSimilarityScore(aiResponse, guess)
     return NextResponse.json({ aiResponse, score })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('OpenAI error:', error)
-    return NextResponse.json({ error: error.message || 'AI generation failed' }, { status: 500 })
+    const errMessage =
+      typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message?: string }).message ?? 'AI generation failed'
+        : 'AI generation failed'
+
+    return NextResponse.json({ error: errMessage }, { status: 500 })
   }
 }

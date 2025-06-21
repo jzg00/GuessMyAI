@@ -1,9 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
-
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || ''
 
 export default function AdminPage() {
   const [password, setPassword] = useState('')
@@ -13,13 +10,26 @@ export default function AdminPage() {
   const [aiResponse, setAiResponse] = useState('')
   const [message, setMessage] = useState('')
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      setAuthenticated(true)
-      setMessage('')
-    } else {
-      setMessage('Incorrect password')
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ password }),
+      })
+
+      if (res.ok) {
+        setAuthenticated(true)
+        setMessage('')
+      } else {
+        const data = await res.json()
+        setMessage(data.error || 'Incorrect password')
+      }
+    } catch (err) {
+      console.error('Login error', err)
+      setMessage('Login failed')
     }
   }
 
@@ -33,7 +43,10 @@ export default function AdminPage() {
     try {
       const response = await fetch('/api/admin/prompt', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({ date, prompt, aiResponse })
       })
 
@@ -52,7 +65,9 @@ export default function AdminPage() {
 
   const fetchPromptForDate = async (selectedDate: string) => {
     try {
-      const response = await fetch(`/api/admin/prompt?date=${selectedDate}`)
+      const response = await fetch(`/api/admin/prompt?date=${selectedDate}`, {
+        credentials: 'include',
+      })
 
       if (response.status === 404) {
         setPrompt('')

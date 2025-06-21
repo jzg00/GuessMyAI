@@ -157,9 +157,9 @@ export function DailyPromptGame() {
         />
       </div>
       <div className="mb-6 text-center text-lg text-gray-800 font-medium h-20 flex items-center justify-center relative">
-        <span className="text-4xl text-gray-500 absolute left-0 top-1/2 -translate-y-1/2 font-serif">"</span>
+        <span className="text-4xl text-gray-500 absolute left-0 top-1/2 -translate-y-1/2 font-serif">&ldquo;</span>
         <span className="px-8 font-serif italic">{promptData.prompt}</span>
-        <span className="text-4xl text-gray-500 absolute right-0 top-1/2 -translate-y-1/2 font-serif">"</span>
+        <span className="text-4xl text-gray-500 absolute right-0 top-1/2 -translate-y-1/2 font-serif">&rdquo;</span>
       </div>
       <div className="mb-2 text-center text-sm text-gray-500">
         AI's response is{' '}
@@ -210,7 +210,7 @@ export function DailyPromptGame() {
             <ul className="text-sm text-gray-600">
               {attempts.map((attempt, i) => (
                 <li key={i} className="mb-1">
-                  "{attempt}" - {attemptScores[i]}%
+                  &quot;{attempt}&quot; - {attemptScores[i]}%
                 </li>
               ))}
             </ul>

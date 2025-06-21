@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { validateDateAccess } from '@/lib/dateValidation'
 
 export async function POST(req: NextRequest) {
   const { date, prompt, aiResponse } = await req.json()

@@ -53,6 +53,7 @@ export function useGame() {
         }))
       }
     } catch (err) {
+      console.error(err)
       setGameState(prev => ({
         ...prev,
         error: 'Failed to fetch API'
