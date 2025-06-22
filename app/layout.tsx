@@ -6,15 +6,18 @@ import { Analytics } from "@vercel/analytics/next"
 export const metadata = {
   title: 'GuessMyAI',
   description: 'Try to guess what the AI will say!',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-      </head>
       <body>
         {children}
         <Analytics />

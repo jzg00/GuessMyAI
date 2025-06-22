@@ -18,14 +18,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main style={{ maxWidth: 600, margin: 'auto', padding: '12px 20px' }} className="flex-1">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
+      <main className="flex-1 max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 w-full">
         <div className="text-center mb-4">
           <div className="mb-4">
             <img src="/logo.png" alt="Logo" className="w-12 h-12 mx-auto" />
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
             GuessMyAI
           </h1>
           <p className="text-gray-600 text-sm">
@@ -35,7 +35,7 @@ export default function Home() {
 
         <div className="flex mb-3">
           <button
-            className={`flex-1 py-2 rounded-t-lg font-semibold transition ${
+            className={`flex-1 py-2 rounded-t-lg font-semibold transition text-sm sm:text-base ${
               mode === 'daily'
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -45,7 +45,7 @@ export default function Home() {
             Daily Prompt
           </button>
           <button
-            className={`flex-1 py-2 rounded-t-lg font-semibold transition ${
+            className={`flex-1 py-2 rounded-t-lg font-semibold transition text-sm sm:text-base ${
               mode === 'custom'
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -56,7 +56,7 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-5 w-[560px]">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-5 w-full">
           {mode === 'daily' ? (
             <DailyPromptGame />
           ) : (

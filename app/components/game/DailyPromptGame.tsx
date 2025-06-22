@@ -140,8 +140,8 @@ export function DailyPromptGame() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+        <h2 className="text-xl sm:text-2xl font-bold text-center">
           {selectedDate.toLocaleDateString() === new Date().toLocaleDateString()
             ? "Today's Prompt"
             : `Prompt for ${selectedDate.toLocaleDateString('en-US', {
@@ -156,10 +156,10 @@ export function DailyPromptGame() {
           onDateSelect={handleDateSelect}
         />
       </div>
-      <div className="mb-6 text-center text-lg text-gray-800 font-medium h-20 flex items-center justify-center relative">
-        <span className="text-4xl text-gray-500 absolute left-0 top-1/2 -translate-y-1/2 font-serif">&ldquo;</span>
-        <span className="px-8 font-serif italic">{promptData.prompt}</span>
-        <span className="text-4xl text-gray-500 absolute right-0 top-1/2 -translate-y-1/2 font-serif">&rdquo;</span>
+      <div className="mb-6 text-center text-base sm:text-lg text-gray-800 font-medium min-h-[5rem] flex items-center justify-center relative px-4">
+        <span className="text-2xl sm:text-4xl text-gray-500 absolute left-0 top-1/2 -translate-y-1/2 font-serif">&ldquo;</span>
+        <span className="px-6 sm:px-8 font-serif italic">{promptData.prompt}</span>
+        <span className="text-2xl sm:text-4xl text-gray-500 absolute right-0 top-1/2 -translate-y-1/2 font-serif">&rdquo;</span>
       </div>
       <div className="mb-2 text-center text-sm text-gray-500">
         AI's response is{' '}
@@ -171,7 +171,7 @@ export function DailyPromptGame() {
       {!revealed ? (
         <>
           <form onSubmit={handleGuess} className="flex flex-col items-center gap-4">
-            <div className="relative w-full max-w-md">
+            <div className="relative w-full">
               <input
                 type="text"
                 value={guess}
