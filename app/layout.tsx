@@ -1,6 +1,7 @@
 // app/layout.tsx
 import '@/globals.css'
 import { ReactNode } from 'react'
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata = {
   title: 'GuessMyAI',
