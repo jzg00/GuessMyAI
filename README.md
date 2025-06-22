@@ -1,9 +1,9 @@
 # 🎮 Guess the AI
 
-![Favicon](app/favicon.ico)
+<img src="app/favicon.ico" alt="Favicon" width="240">
 [guessmyai.com](https://guessmyai.com)
 
-**Guess the AI** is a fun web app where users try to guess how an AI (ChatGPT) will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
+**Guess the AI** is a fun web app where users try to guess how an AI will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
 
 ---
 
@@ -28,8 +28,6 @@
 - [Tailwind CSS](https://tailwindcss.com/)
 - [OpenAI API](https://platform.openai.com/)
 - [Supabase(postgres)](https://supabase.com/)
-- Serverless functions (API routes)
-
 ---
 
 ## 🔮 Future Ideas
