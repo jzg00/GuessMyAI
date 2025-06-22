@@ -1,5 +1,8 @@
 # 🎮 Guess the AI
 
+![Favicon](app/favicon.ico)
+[guessmyai.com](https://guessmyai.com)
+
 **Guess the AI** is a fun web app where users try to guess how an AI (ChatGPT) will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
 
 ---
