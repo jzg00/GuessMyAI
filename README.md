@@ -1,9 +1,9 @@
-# 🎮 Guess the AI
+# 🎮 GuessMyAI
 
 <img src="app/favicon.ico" alt="Favicon" width="240">
 https://guessmyai.com
 
-**Guess the AI** is a fun web app where users try to guess how an AI will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
+**GuessMyAI** is a fun web app where users try to guess how an AI will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
 
 ---
 
