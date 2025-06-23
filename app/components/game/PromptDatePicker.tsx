@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css"
 
@@ -12,6 +12,7 @@ export function PromptDatePicker({ onDateSelect, selectedDate }: PromptDatePicke
   const [availableDates, setAvailableDates] = useState<string[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const datePickerRef = useRef<HTMLDivElement>(null)
 
   // fetch available dates when component mounts
   useEffect(() => {
@@ -34,6 +35,23 @@ export function PromptDatePicker({ onDateSelect, selectedDate }: PromptDatePicke
     fetchAvailableDates()
   }, [])
 
+  // clicking outside to close date picker
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+
   const formatDateToString = (date: Date): string => {
     return date.getFullYear() + '-' +
       String(date.getMonth() + 1).padStart(2, '0') + '-' +
@@ -46,7 +64,7 @@ export function PromptDatePicker({ onDateSelect, selectedDate }: PromptDatePicke
   }
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" ref={datePickerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
