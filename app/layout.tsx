@@ -2,6 +2,7 @@
 import '@/globals.css'
 import { ReactNode } from 'react'
 import { Analytics } from "@vercel/analytics/next"
+import { AuthProvider } from './contexts/AuthContext'
 
 export const metadata = {
   title: 'GuessMyAI',
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
