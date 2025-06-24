@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import { GameForm } from '@/components/game/GameForm'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { Button } from '@/components/ui/Button'
@@ -22,7 +23,7 @@ export default function Home() {
       <main className="flex-1 max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 w-full">
         <div className="text-center mb-4">
           <div className="mb-4">
-            <img src="/logo.png" alt="Logo" className="w-12 h-12 mx-auto" />
+            <Image src="/logo.png" alt="Logo" width={48} height={48} className="mx-auto" />
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
