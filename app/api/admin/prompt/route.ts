@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseAdmin } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
   const { date, prompt, aiResponse } = await req.json()
@@ -16,13 +16,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { error } = await supabase
+    const supabaseAdmin = createSupabaseAdmin()
+    const { error } = await supabaseAdmin
       .from('daily_prompts')
       .upsert([{ date, prompt, ai_response: aiResponse }], { onConflict: 'date' })
 
     if (error) {
       console.error('Database error:', error)
-      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+      return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 })
     }
 
     return NextResponse.json({ message: 'Prompt saved successfully' })
@@ -48,7 +49,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const { data, error } = await supabase
+    const supabaseAdmin = createSupabaseAdmin()
+    const { data, error } = await supabaseAdmin
       .from('daily_prompts')
       .select('*')
       .eq('date', date)
