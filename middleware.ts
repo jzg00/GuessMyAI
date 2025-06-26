@@ -3,6 +3,13 @@ import type { NextRequest } from 'next/server'
 import { Redis } from '@upstash/redis'
 import { Ratelimit } from '@upstash/ratelimit'
 
+// Debug logging for environment variables
+console.log('=== MIDDLEWARE DEBUG: Environment Variables ===')
+console.log('UPSTASH_REDIS_REST_URL exists:', !!process.env.UPSTASH_REDIS_REST_URL)
+console.log('UPSTASH_REDIS_REST_TOKEN exists:', !!process.env.UPSTASH_REDIS_REST_TOKEN)
+console.log('All env keys:', Object.keys(process.env).filter(key => key.includes('UPSTASH') || key.includes('REDIS')))
+console.log('=== MIDDLEWARE DEBUG END ===')
+
 // initialize redis client once per runtime instance
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
