@@ -32,9 +32,8 @@ https://guessmyai.com
 
 ## 🔮 Future Ideas
 
-- Hints
-- User accounts
+- Hints / Improved scoring system
 - Leaderboards / scoring history
 - Prompt categories
-
+- Guess the prompt of AI generated images
 ---
