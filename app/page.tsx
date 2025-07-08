@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { GameForm } from '@/components/game/GameForm'
+import { useAuth } from '@/contexts/AuthContext'
+import AuthForm from '@/components/game/AuthForm'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { Button } from '@/components/ui/Button'
 import { Footer } from '@/components/ui/Footer'
@@ -13,13 +15,53 @@ export default function Home() {
   const [mode, setMode] = useState<'daily' | 'custom'>('daily')
   // Custom prompt game state/hooks
   const { gameState, updateField, updateWordCount, submitGuess, resetGame } = useGame()
+  const { user, loading, signOut } = useAuth()
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
 
   const handleSubmit = (submission: { prompt: string; guess: string; wordCount: WordCountOption }) => {
     submitGuess(submission)
   }
 
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+  }
+
+
+  const TopBar = () => (
+    <div className="flex justify-end items-center p-4">
+      {loading ? null : user ? (
+        <div className="flex items-center gap-4">
+          <span className="text-gray-700">Hello, {user.user_metadata?.displayName || user.email}</span>
+          <button
+            className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+            onClick={signOut}
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-2">
+          <button
+            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            onClick={() => { setAuthMode('login'); setShowAuthModal(true) }}
+          >
+            Login
+          </button>
+          <button
+            className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+            onClick={() => { setAuthMode('signup'); setShowAuthModal(true) }}
+          >
+            Sign Up
+          </button>
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
+      <TopBar />
       <main className="flex-1 max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6 w-full">
         <div className="text-center mb-4">
           <div className="mb-4">
@@ -110,6 +152,25 @@ export default function Home() {
       </main>
 
       <Footer />
+      {showAuthModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+          onClick={() => setShowAuthModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg p-6 shadow-lg min-w-[320px] relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowAuthModal(false)}
+            >
+              ×
+            </button>
+            <AuthForm mode={authMode} onAuthSuccess={() => setShowAuthModal(false)} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
