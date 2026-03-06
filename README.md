@@ -3,11 +3,11 @@
 <img src="app/favicon.ico" alt="Favicon" width="240">
 https://guessmyai.com
 
-**🎮 GuessMyAI** is a fun web app where users try to guess how an AI will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
+** GuessMyAI** is a fun web app where users try to guess how an AI will respond to a given prompt. Points are awarded based on how close the user's guess is to the actual AI response.
 
 ---
 
-## 🚀 Features
+## Features
 
 ### Daily Prompt Mode
 - **Daily curated prompts** - A new challenge every day
@@ -22,7 +22,7 @@ https://guessmyai.com
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
 - [Next.js](https://nextjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
@@ -30,7 +30,7 @@ https://guessmyai.com
 - [Supabase(postgres)](https://supabase.com/)
 ---
 
-## 🔮 Future Ideas
+## Future Ideas
 
 - Hints / Improved scoring system
 - Leaderboards / scoring history
